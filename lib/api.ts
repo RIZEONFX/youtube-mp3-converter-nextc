@@ -83,13 +83,20 @@ async function requestJson<Output>(path: string, schema: z.ZodType<Output>, body
   else signal?.addEventListener("abort", abort, { once: true });
 
   try {
-    const response = await fetch(url, {
-      method: body === undefined ? "GET" : "POST",
-      cache: "no-store",
-      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
-      body: body === undefined ? undefined : JSON.stringify(body),
-      signal: controller.signal,
-    });
+    
+   const response = await fetch(url, {
+     method: body === undefined ? "GET" : "POST",
+     cache: "no-store",
+     headers: {
+       "ngrok-skip-browser-warning": "1",
+       ...(body === undefined
+       ? {}
+       : { "Content-Type": "application/json" }),
+     },
+       body: body === undefined ? undefined : JSON.stringify(body),
+       signal: controller.signal,
+     });
+
 
     if (response.status >= 500) throw new ApiError("server", "Server sedang bermasalah, coba lagi");
 
